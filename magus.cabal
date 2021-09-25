@@ -1,0 +1,20 @@
+cabal-version:       >=1.10
+name:                magus
+version:             0.1.0.0
+synopsis:            A terminal interface for git
+license:             MIT
+license-file:        LICENSE
+author:              Ben Buchanan
+maintainer:          bsbuchanan99@gmail.com
+build-type:          Simple
+
+executable magus
+  main-is:             Main.hs
+  other-modules:       Magus
+  -- other-extensions:
+  build-depends:       base >=4.14 && <4.15
+                     , brick
+                     , vty
+  ghc-options:         -threaded
+  hs-source-dirs:      src
+  default-language:    Haskell2010
