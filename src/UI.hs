@@ -60,7 +60,10 @@ drawFileDiff appState = vLimitPercent 70 $ borderWithLabel (str "Diff") $
                                 fileDiff = str $ (_diff appState) ++ " "
 
 drawCommitLog :: AppState -> Widget ResourceName
-drawCommitLog appState = hLimitPercent 60 $ simplePanel "Commit Log"
+drawCommitLog appState = hLimitPercent 60 $ borderWithLabel (str "Commit Log") $
+                         padRightAndBottom Max $ commitLog
+                            where
+                                commitLog = str $ (_commits appState) ++ " "
 
 drawBranches :: AppState -> Widget ResourceName
 drawBranches appState = simplePanel "Branches"

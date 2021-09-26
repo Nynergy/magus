@@ -11,6 +11,7 @@ data AppState = AppState {
                 , _upToDate :: UpToDateStatus
                 , _changes :: [Change]
                 , _diff :: String
+                , _commits :: String
                 }
 
 data UpToDateStatus = UpToDate
