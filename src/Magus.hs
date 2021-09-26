@@ -55,6 +55,6 @@ upToDateFromStatus status =
     let l = head $ drop 1 $ lines status
     in case "up to date" `isInfixOf` l of
         True  -> UpToDate
-        False -> let direction = (words l) !! 4
-                     amount    = read ((words l) !! 7) :: Int
+        False -> let direction = (words l) !! 3
+                     amount    = read (last $ init $ words l) :: Int
                  in  if direction == "behind" then Behind amount else Ahead amount
