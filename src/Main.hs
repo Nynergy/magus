@@ -4,5 +4,7 @@ import Brick
 
 import Magus
 
-main :: IO ()
-main = defaultMain app initialState
+main :: IO AppState
+main = do
+    state <- initialState
+    defaultMain app state
