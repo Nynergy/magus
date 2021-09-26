@@ -38,7 +38,8 @@ initialState = do
     let upToDate = upToDateFromStatus status
     shortStatus <- gitShortStatus
     let changes = changesFromShortStatus shortStatus
-    return $ AppState repo branch upToDate changes
+    diff <- gitDiff
+    return $ AppState repo branch upToDate changes diff
 
 gitRepo :: IO String
 gitRepo = return =<< readProcess "/usr/bin/git" ["rev-parse", "--show-toplevel"] []
@@ -76,3 +77,6 @@ changeFromStatusLine s =
                , _workingTree = makeStatus workingTreeChar
                , _files       = filepaths
                }
+
+gitDiff :: IO String
+gitDiff = return =<< readProcess "/usr/bin/git" ["diff"] []

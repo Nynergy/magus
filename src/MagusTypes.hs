@@ -10,6 +10,7 @@ data AppState = AppState {
                 , _currentBranch :: String
                 , _upToDate :: UpToDateStatus
                 , _changes :: [Change]
+                , _diff :: String
                 }
 
 data UpToDateStatus = UpToDate

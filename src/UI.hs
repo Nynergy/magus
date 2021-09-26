@@ -52,8 +52,12 @@ drawUnstagedChanges appState = borderWithLabel (str "Unstaged Changes") $
                                     files           = filter isUnstaged $ _changes appState
                                     isUnstaged      = (\c -> (_workingTree c) /= Unmodified)
 
+-- TODO: At the moment, this draws the entire diff. Eventually, we want only a single file.
 drawFileDiff :: AppState -> Widget ResourceName
-drawFileDiff appState = vLimitPercent 70 $ simplePanel "Diff"
+drawFileDiff appState = vLimitPercent 70 $ borderWithLabel (str "Diff") $
+                        padRightAndBottom Max $ fileDiff
+                            where
+                                fileDiff = str $ (_diff appState) ++ " "
 
 drawCommitLog :: AppState -> Widget ResourceName
 drawCommitLog appState = hLimitPercent 60 $ simplePanel "Commit Log"
