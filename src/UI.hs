@@ -38,7 +38,7 @@ drawRepoInfo appState = vLimit 3 $ borderWithLabel (str "Repo Info") $
 
 drawStagedChanges :: AppState -> Widget ResourceName
 drawStagedChanges appState = borderWithLabel (str "Staged Changes") $
-                             padRightAndBottom Max $ stagedChanges
+                             padRightAndBottom Max $ stagedChanges <=> str " "
                                 where
                                     stagedChanges = vBox $ map (str . show) files
                                     files         = filter isStaged $ _changes appState
@@ -46,7 +46,7 @@ drawStagedChanges appState = borderWithLabel (str "Staged Changes") $
 
 drawUnstagedChanges :: AppState -> Widget ResourceName
 drawUnstagedChanges appState = borderWithLabel (str "Unstaged Changes") $
-                               padRightAndBottom Max $ unstagedChanges
+                               padRightAndBottom Max $ unstagedChanges <=> str " "
                                 where
                                     unstagedChanges = vBox $ map (str . show) files
                                     files           = filter isUnstaged $ _changes appState
