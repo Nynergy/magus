@@ -37,10 +37,20 @@ drawRepoInfo appState = vLimit 3 $ borderWithLabel (str "Repo Info") $
                                 branchName   = str (_currentBranch appState)
 
 drawStagedChanges :: AppState -> Widget ResourceName
-drawStagedChanges appState = simplePanel "Staged Changes"
+drawStagedChanges appState = borderWithLabel (str "Staged Changes") $
+                             padRightAndBottom Max $ stagedChanges
+                                where
+                                    stagedChanges = vBox $ map (str . show) files
+                                    files         = filter isStaged $ _changes appState
+                                    isStaged      = (\c -> (_index c) /= Unmodified && (_index c) /= Untracked)
 
 drawUnstagedChanges :: AppState -> Widget ResourceName
-drawUnstagedChanges appState = simplePanel "Unstaged Changes"
+drawUnstagedChanges appState = borderWithLabel (str "Unstaged Changes") $
+                               padRightAndBottom Max $ unstagedChanges
+                                where
+                                    unstagedChanges = vBox $ map (str . show) files
+                                    files           = filter isUnstaged $ _changes appState
+                                    isUnstaged      = (\c -> (_workingTree c) /= Unmodified)
 
 drawFileDiff :: AppState -> Widget ResourceName
 drawFileDiff appState = vLimitPercent 70 $ simplePanel "Diff"

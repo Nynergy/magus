@@ -36,13 +36,15 @@ initialState = do
     status <- gitStatus
     let branch = branchFromStatus status
     let upToDate = upToDateFromStatus status
-    return $ AppState repo branch upToDate
+    shortStatus <- gitShortStatus
+    let changes = changesFromShortStatus shortStatus
+    return $ AppState repo branch upToDate changes
 
 gitRepo :: IO String
 gitRepo = return =<< readProcess "/usr/bin/git" ["rev-parse", "--show-toplevel"] []
 
 repoFromPath :: FilePath -> String
-repoFromPath path = init $ last $ splitOn "/" path -- init grabs everything but the newline
+repoFromPath path = init $ last $ splitOn "/" path
 
 gitStatus :: IO String
 gitStatus = return =<< readProcess "/usr/bin/git" ["status"] []
@@ -58,3 +60,19 @@ upToDateFromStatus status =
         False -> let direction = (words l) !! 3
                      amount    = read (last $ init $ words l) :: Int
                  in  if direction == "behind" then Behind amount else Ahead amount
+
+gitShortStatus :: IO String
+gitShortStatus = return =<< readProcess "/usr/bin/git" ["status", "-s"] []
+
+changesFromShortStatus :: String -> [Change]
+changesFromShortStatus ss = map changeFromStatusLine $ lines ss
+
+changeFromStatusLine :: String -> Change
+changeFromStatusLine s =
+    let indexChar       = s !! 0
+        workingTreeChar = s !! 1
+        filepaths       = filter (/= "->") $ tail $ words s
+    in  Change { _index       = makeStatus indexChar
+               , _workingTree = makeStatus workingTreeChar
+               , _files       = filepaths
+               }
