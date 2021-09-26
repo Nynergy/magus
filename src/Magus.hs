@@ -40,7 +40,8 @@ initialState = do
     let changes = changesFromShortStatus shortStatus
     diff <- gitDiff
     commits <- gitLog
-    return $ AppState repo branch upToDate changes diff commits
+    branches <- gitBranch
+    return $ AppState repo branch upToDate changes diff commits branches
 
 gitRepo :: IO String
 gitRepo = return =<< readProcess "/usr/bin/git" ["rev-parse", "--show-toplevel"] []
@@ -84,3 +85,6 @@ gitDiff = return =<< readProcess "/usr/bin/git" ["diff"] []
 
 gitLog :: IO String
 gitLog = return =<< readProcess "/usr/bin/git" ["log", "--oneline"] []
+
+gitBranch :: IO String
+gitBranch = return =<< readProcess "/usr/bin/git" ["branch"] []

@@ -66,7 +66,10 @@ drawCommitLog appState = hLimitPercent 60 $ borderWithLabel (str "Commit Log") $
                                 commitLog = str $ (_commits appState) ++ " "
 
 drawBranches :: AppState -> Widget ResourceName
-drawBranches appState = simplePanel "Branches"
+drawBranches appState = borderWithLabel (str "Branches") $
+                        padRightAndBottom Max $ branches
+                            where
+                                branches = str $ (_branches appState) ++ " "
 
 simplePanel :: String -> Widget ResourceName
 simplePanel title = borderWithLabel (str title) $
