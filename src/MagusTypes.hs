@@ -14,6 +14,6 @@ data UpToDateStatus = UpToDate
                     | Behind Int
 
 instance Show UpToDateStatus where
-    show (UpToDate) = "(Branch up to date)"
-    show (Ahead i)  = "(Branch ahead by " ++ (show i) ++ " commits)"
-    show (Behind i) = "(Branch behind by " ++ (show i) ++ " commits)"
+    show (UpToDate) = "(Up to date)"
+    show (Ahead i)  = "(Ahead by " ++ (show i) ++ " commits)"
+    show (Behind i) = "(Behind by " ++ (show i) ++ " commits)"
