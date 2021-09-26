@@ -25,7 +25,13 @@ drawUI appState = [
                   ]
 
 drawRepoInfo :: AppState -> Widget ResourceName
-drawRepoInfo appState = vLimit 3 $ simplePanel "Repo Info"
+drawRepoInfo appState = vLimit 3 $ borderWithLabel (str "Repo Info") $
+                        padRightAndBottom Max $ hCenter $ repoInfo
+                            where
+                                repoInfo     = hBox [upToDateInfo, repoName, branchName]
+                                upToDateInfo = str ((show $ _upToDate appState) ++ " :: ")
+                                repoName     = str (_repo appState ++ " -> ")
+                                branchName   = str (_currentBranch appState)
 
 drawStagedChanges :: AppState -> Widget ResourceName
 drawStagedChanges appState = simplePanel "Staged Changes"

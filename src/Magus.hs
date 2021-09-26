@@ -2,6 +2,8 @@ module Magus where
 
 import Brick
 import Control.Monad.IO.Class
+import Data.List
+import Data.List.Split
 import qualified Graphics.Vty as V
 import Graphics.Vty.Attributes
 import System.Process
@@ -10,33 +12,49 @@ import MagusTypes
 import UI
 
 app :: App AppState AppEvent ResourceName
-app =
-  App
-  { appDraw = drawUI
-  , appChooseCursor = neverShowCursor
-  , appHandleEvent = handleEvent
-  , appStartEvent = return
-  , appAttrMap = const customAttrMap
-  }
+app = App { appDraw = drawUI
+          , appChooseCursor = neverShowCursor
+          , appHandleEvent = handleEvent
+          , appStartEvent = return
+          , appAttrMap = const customAttrMap
+          }
 
 handleEvent :: AppState -> BrickEvent ResourceName AppEvent -> EventM ResourceName (Next AppState)
 handleEvent appState (VtyEvent ev) =
     case ev of
         V.EvKey (V.KChar 'q') [] -> Brick.halt appState
-        V.EvKey (V.KChar 's') [] -> do
-            changes <- liftIO gitStatus
-            let newState = appState { _gitChanges = changes }
-            Brick.continue newState
         _                        -> Brick.continue appState
 handleEvent appState _ = Brick.continue appState
-
-gitStatus :: IO String
-gitStatus = return =<< readProcess "/usr/bin/git" ["status", "-s"] []
 
 customAttrMap :: AttrMap
 customAttrMap = attrMap (defAttr) ([])
 
 initialState :: IO AppState
 initialState = do
-    changes <- gitStatus
-    return $ AppState changes
+    repoPath <- gitRepo
+    let repo = repoFromPath repoPath
+    status <- gitStatus
+    let branch = branchFromStatus status
+    let upToDate = upToDateFromStatus status
+    return $ AppState repo branch upToDate
+
+gitRepo :: IO String
+gitRepo = return =<< readProcess "/usr/bin/git" ["rev-parse", "--show-toplevel"] []
+
+repoFromPath :: FilePath -> String
+repoFromPath path = init $ last $ splitOn "/" path -- init grabs everything but the newline
+
+gitStatus :: IO String
+gitStatus = return =<< readProcess "/usr/bin/git" ["status"] []
+
+branchFromStatus :: String -> String
+branchFromStatus status = last $ words $ head $ lines status
+
+upToDateFromStatus :: String -> UpToDateStatus
+upToDateFromStatus status =
+    let l = head $ drop 1 $ lines status
+    in case "up to date" `isInfixOf` l of
+        True  -> UpToDate
+        False -> let direction = (words l) !! 4
+                     amount    = read ((words l) !! 7) :: Int
+                 in  if direction == "behind" then Behind amount else Ahead amount
