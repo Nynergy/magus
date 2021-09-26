@@ -1,6 +1,6 @@
 # magus
 
-A terminal interface for git
+A terminal interface for git, built with [brick](https://github.com/jtdaugherty/brick).
 
 ------------------------------------------------------------------------------
 
